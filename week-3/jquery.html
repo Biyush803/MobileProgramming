@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Biyush Week-3 Thursday</title>
+
+  <!-- jQuery CDN -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+
+    #box {
+      width: 150px;
+      height: 150px;
+      background-color: #3498db;
+      border-radius: 10px;
+      position: relative;
+      opacity: 1;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 1.5em;
+      font-weight: bold;
+      text-align: center;
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 10px 20px;
+      background-color: #2ecc71;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #27ae60;
+    }
+  </style>
+
+  <script>
+  $(document).ready(function(){
+    $("button").click(function(){
+
+      // Step 1: Move right and reduce opacity
+      $("#box").animate({
+        left: "200px",
+        opacity: 0.5
+      }, 800)
+
+      // Step 2: Resize and round corners
+      .animate({
+        width: "200px",
+        height: "200px",
+        borderRadius: "50px"
+      }, 800)
+
+      // Step 3: Change color and enlarge text
+      .queue(function(next){
+        $(this).css({
+          "background-color": "#e74c3c"
+        });
+        next();
+      })
+
+      // Step 4: Animate text size to 6em
+      .animate({
+        fontSize: "4em"
+      }, 800)
+
+      // Step 5: Move back and restore everything
+      .animate({
+        left: "0px",
+        opacity: 1,
+        width: "150px",
+        height: "150px",
+        borderRadius: "10px",
+        fontSize: "1.5em"
+      }, 800)
+
+      // Step 6: Fade out and back in
+      .fadeOut(600)
+      .fadeIn(600);
+    });
+  });
+  </script>
+</head>
+
+<body>
+
+  <p>Click the button to animate the box and its text.</p>
+  <button>Animate Box</button><br><br>
+
+  <div id="box">Hello!</div>
+
+</body>
+</html>

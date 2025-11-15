@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    .navbar {
+        background: #227e1e;
+        padding: 10px;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+   
+    .nav-links {
+        display: flex;
+        gap: 20px;
+    }
+
+    .nav-links a {
+        color: white;
+        text-decoration: none;
+        font-size: 18px;
+    }
+
+    
+    .hamburger {
+        display: none;
+        font-size: 28px;
+        cursor: pointer;
+    }
+
+    @media screen and (max-width: 480px) {
+        .nav-links {
+            display: none;
+            flex-direction: column;
+            background: #c15e5e;
+            width: 100%;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        .hamburger {
+            display: block;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<div class="navbar">
+    <h2>Biyush</h2>
+
+   
+    <div class="hamburger">&#9776;</div>
+
+  
+    <div class="nav-links">
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Courses</a>
+        <a href="#">Contact</a>
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+    $(".hamburger").click(function(){
+        $(".nav-links").slideToggle();  
+    });
+});
+</script>
+
+</body>
+</html>

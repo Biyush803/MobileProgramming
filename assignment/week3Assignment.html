@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Lucky Split App</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+    }
+
+    .screen {
+      display: none;
+      height: 100vh;
+      width: 100%;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      display: flex;
+    }
+
+    #loginScreen {
+      background-color: #4c7a34;
+      color: white;
+      text-align: center;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .logo {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 8px;
+      font-family: serif;
+    }
+
+    .btn {
+      background-color: #4c7a34;
+      color: white;
+      padding: 12px 20px;
+      border: 2px solid white;
+      margin: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .btn:hover {
+      opacity: 0.95;
+    }
+
+    input[type="text"], input[type="number"] {
+      padding: 10px;
+      margin: 6px;
+      width: 250px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    #memberList div {
+      background: #e6f2df;
+      margin: 5px;
+      padding: 8px;
+      border-radius: 6px;
+      width: 220px;
+      text-align: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #memberList .nameTxt {
+      flex: 1;
+      text-align: left;
+      padding-left: 8px;
+    }
+
+    #result {
+      font-size: 18px;
+      margin-top: 16px;
+      color: #4c7a34;
+      font-weight: bold;
+      max-width: 320px;
+      text-align: left;
+    }
+
+    .logo-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .logo-img {
+      width: 120px;
+      height: auto;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.1);
+      padding: 6px;
+    }
+
+ 
+    h2 { margin: 8px 0; color: #333; }
+    .small-note { font-size: 13px; color: #444; margin-top: 6px; }
+    .remove-btn { background: transparent; color: #c33; border: none; cursor: pointer; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+
+  <div id="loginScreen" class="screen">
+    <div class="logo">Lucky Split 🍀</div>
+
+    <div class="logo-container">
+      <img src="Split.png" class="logo-img" alt="Lucky Split logo" />
+    </div>
+
+    <input type="text" id="usernameInput" placeholder="Enter username" />
+    <button class="btn" id="loginBtn">Continue</button>
+  </div>
+
+
+  <div id="modeScreen" class="screen" style="display:none; flex-direction:column;">
+    <h2>Select Mode</h2>
+    <div>
+      <button class="btn" id="luckyPayBtn">Lucky Pay</button>
+      <button class="btn" id="luckyWinnerBtn">Lucky Winner</button>
+    </div>
+    <div class="small-note">Lucky Pay will split the bill randomly; Lucky Winner picks a single name.</div>
+  </div>
+
+
+  <div id="nameScreen" class="screen" style="display:none; flex-direction:column;">
+    <h2>Add Members</h2>
+
+    <div>
+      <input type="text" id="nameInput" placeholder="Enter name" />
+      <button class="btn" id="addNameBtn">Add Name</button>
+    </div>
+
+    <div id="memberList" style="margin-top:12px; width: 100%; max-width: 360px;"></div>
+
+
+    <div id="billSection" style="display:none; margin-top: 14px;">
+      <input type="number" id="billInput" placeholder="Enter total bill (e.g. 2500)" min="0" />
+    </div>
+
+    <div style="margin-top:12px;">
+      <button class="btn" id="pickRandomBtn">Pick Random</button>
+      <button class="btn" id="backToModeBtn" style="background:#fff;color:#4c7a34;border:2px solid #4c7a34;">Back</button>
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+<script>
+
+  $(document).ready(function() {
+    $("#loginScreen").show();
+  });
+
+
+  $("#loginBtn").click(function() {
+    const username = $("#usernameInput").val().trim();
+    $(".screen").hide();
+    $("#modeScreen").show();
+  });
+
+
+  $("#luckyPayBtn").click(function() {
+    $(".screen").hide();
+    $("#nameScreen").show();
+    $("#billSection").show();
+    $("#result").html('');
+  });
+
+  $("#luckyWinnerBtn").click(function() {
+    $(".screen").hide();
+    $("#nameScreen").show();
+    $("#billSection").hide();
+    $("#result").html('');
+  });
+
+  $("#backToModeBtn").click(function() {
+    $(".screen").hide();
+    $("#modeScreen").show();
+  });
+
+
+  $("#addNameBtn").click(function() {
+    const name = $("#nameInput").val().trim();
+    if (!name) return;
+    
+    const $row = $(`
+      <div>
+        <span class="nameTxt"></span>
+        <button class="remove-btn" title="Remove">✕</button>
+      </div>
+    `);
+    $row.find('.nameTxt').text(name);
+ 
+    $row.find('.remove-btn').click(function() {
+      $row.remove();
+    });
+    $("#memberList").append($row);
+    $("#nameInput").val('');
+  });
+
+
+  $("#pickRandomBtn").click(function() {
+    const members = [];
+    $("#memberList div").each(function() {
+      const nm = $(this).find('.nameTxt').text().trim();
+      if (nm) members.push(nm);
+    });
+
+    if (members.length === 0) {
+      $("#result").html('<div style="color:#c33">Add at least one name!</div>');
+      return;
+    }
+
+    
+    if ($("#billSection").is(":visible")) {
+      const totalBill = parseFloat($("#billInput").val());
+      if (isNaN(totalBill) || totalBill <= 0) {
+        $("#result").html('<div style="color:#c33">Enter a valid bill amount!</div>');
+        return;
+      }
+
+     
+      const randNums = [];
+      let sumRand = 0;
+      for (let i = 0; i < members.length; i++) {
+        const r = Math.random(); 
+        randNums.push(r);
+        sumRand += r;
+      }
+
+     
+      const percFloats = randNums.map(r => (r / sumRand) * 100);
+
+      const percInts = percFloats.map(p => Math.floor(p));
+      let s = percInts.reduce((a,b)=>a+b,0);
+      const deficits = 100 - s;
+      if (deficits > 0) {
+        const fracs = percFloats.map((p, idx) => ({ idx, frac: p - Math.floor(p) }));
+        fracs.sort((a,b) => b.frac - a.frac);
+        for (let k = 0; k < deficits; k++) {
+          percInts[fracs[k].idx] += 1;
+        }
+      } else if (deficits < 0) {
+        const fracs = percFloats.map((p, idx) => ({ idx, frac: p - Math.floor(p) }));
+        fracs.sort((a,b) => a.frac - b.frac); 
+        let need = -deficits;
+        for (let k = 0; k < need; k++) {
+          percInts[fracs[k].idx] = Math.max(0, percInts[fracs[k].idx]-1);
+        }
+      }
+
+      let output = '<h3>Bill Split</h3>';
+      output += `<div>Total bill: Rs. ${totalBill.toFixed(2)}</div>`;
+      output += '<div style="margin-top:8px;">';
+      for (let i = 0; i < members.length; i++) {
+        const pct = percInts[i];
+        const amt = ((pct / 100) * totalBill).toFixed(2);
+        output += `<div style="margin-top:6px;">${members[i]}: ${pct}% = Rs. ${amt}</div>`;
+      }
+      output += '</div>';
+      $("#result").html(output);
+
+    } else {
+      const randomName = members[Math.floor(Math.random() * members.length)];
+      $("#result").html(`<div style="font-size:20px; margin-top:6px;">Selected: <strong>${randomName}</strong></div>`);
+    }
+  });
+</script>
+
+</body>
+</html>
